@@ -7,11 +7,11 @@ using Geodata.Domain;
 
 namespace Geodata.Persistence;
 
-public class GeoEventsDbContext : IdentityDbContext<MyIdentityUser>, IGeodataDbContext
+public class GeodataDbContext : IdentityDbContext<MyIdentityUser>, IGeodataDbContext
 {
     public DbSet<GeodataDomain> GeodataEntities { get; set; }
 
-    public GeoEventsDbContext(DbContextOptions<GeoEventsDbContext> options)
+    public GeodataDbContext(DbContextOptions<GeodataDbContext> options)
         : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder builder)

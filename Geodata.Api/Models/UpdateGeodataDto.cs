@@ -1,20 +1,17 @@
 ﻿using AutoMapper;
 using Geodata.Application.Common.Mappings;
-using Geodata.Domain;
+using Geodata.Application.Geodata.Commands.UpdateGeodata;
 
-namespace Geodata.Application.Geodata.Queries.GetGeodataList;
+namespace Geodata.Api.Models;
 
-internal class GeodataLookupDto : IMapWith<GeodataDomain>
+public class UpdateGeodataDto : IMapWith<UpdateGeodataCommand>
 {
-    //Each list event should only have those fields
-    //which the event list itself needs
+    public Guid UserId { get; set; }
     public Guid Id { get; set; }
     public string Title { get; set; }
-    public string? Details { get; set; }
+    public string Details { get; set; }
     public string Latitude { get; set; }
     public string Longitude { get; set; }
-    public DateTime CreationDate { get; set; }
-    public DateTime? EditDate { get; set; }
     /// <summary>
     /// Checked by moderator
     /// </summary>
@@ -22,9 +19,11 @@ internal class GeodataLookupDto : IMapWith<GeodataDomain>
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<GeodataDomain, GeodataLookupDto>()
+        profile.CreateMap<UpdateGeodataDto, UpdateGeodataCommand>()
             .ForMember(geoDataDto => geoDataDto.Id,
                 opt => opt.MapFrom(geoData => geoData.Id))
+            .ForMember(geoDataDto => geoDataDto.UserId,
+                opt => opt.MapFrom(geoData => geoData.UserId))
             .ForMember(geoDataDto => geoDataDto.Title,
                 opt => opt.MapFrom(geoData => geoData.Title))
             .ForMember(geoDataDto => geoDataDto.Details,
@@ -33,10 +32,6 @@ internal class GeodataLookupDto : IMapWith<GeodataDomain>
                 opt => opt.MapFrom(geoData => geoData.Latitude))
             .ForMember(geoDataDto => geoDataDto.Longitude,
                 opt => opt.MapFrom(geoData => geoData.Longitude))
-            .ForMember(geoDataDto => geoDataDto.CreationDate,
-                opt => opt.MapFrom(geoData => geoData.CreationDate))
-            .ForMember(geoDataDto => geoDataDto.EditDate,
-                opt => opt.MapFrom(geoData => geoData.EditDate))
             .ForMember(geoDataDto => geoDataDto.IsChecked,
                 opt => opt.MapFrom(geoData => geoData.IsChecked));
     }

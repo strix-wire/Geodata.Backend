@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Geodata.Application.Interfaces;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,11 +17,11 @@ public static class DependencyInjection
         var connectionString = connectionStringBuilder.ToString();
         var connection = new SqliteConnection(connectionString);
 
-        services.AddDbContext<GeoEventsDbContext>(options =>
+        services.AddDbContext<GeodataDbContext>(options =>
         {
             options.UseSqlite(connection);
         });
-        services.AddScoped<IGeoEventsDbContext>(provider => provider.GetService<GeoEventsDbContext>());
+        services.AddScoped<IGeodataDbContext>(provider => provider.GetService<GeodataDbContext>());
         return services;
     }
 }

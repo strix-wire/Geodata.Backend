@@ -2,7 +2,7 @@
 
 public class DbInitializer
 {
-    public static void Initialize(GeoEventsDbContext context)
+    public static void Initialize(GeodataDbContext context)
     {
         context.Database.EnsureCreated();
     }

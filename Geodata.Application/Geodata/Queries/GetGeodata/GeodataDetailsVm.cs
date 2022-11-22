@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using Geodata.Application.Common.Mappings;
 using Geodata.Domain;
 
 namespace Geodata.Application.Geodata.Queries.GetGeodata;
 
-internal class GeodataDetailsVm : IMapWith<GeodataEntity>
+internal class GeodataDetailsVm : IMapWith<GeodataDomain>
 {
     public Guid Id { get; set; }
     public string Title { get; set; }
