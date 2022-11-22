@@ -4,7 +4,7 @@ using Geodata.Domain;
 
 namespace Geodata.Application.Geodata.Queries.GetGeodataList;
 
-internal class GeodataLookupDto : IMapWith<GeodataDomain>
+public class GeodataLookupDto : IMapWith<GeodataDomain>
 {
     //Each list event should only have those fields
     //which the event list itself needs

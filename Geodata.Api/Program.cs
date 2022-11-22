@@ -3,12 +3,23 @@ using Geodata.Application.Common.Mappings;
 using System.Reflection;
 using Geodata.Persistence;
 using Geodata.Application;
+using Geodata.Persistence.IdentityEF;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseKestrel();
 
 //Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddIdentity<MyIdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<GeodataDbContext>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredUniqueChars = 0;
+});
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddAutoMapper(config =>
@@ -42,6 +53,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseStaticFiles();
 app.UseEndpoints(endpoints =>
 {

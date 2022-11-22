@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using Geodata.Api.Models;
 using Geodata.Application.Geodata.Commands.CreateGeodata;
+using Geodata.Application.Geodata.Commands.DeleteGeodata;
 using Geodata.Application.Geodata.Commands.UpdateGeodata;
+using Geodata.Application.Geodata.Queries.GetGeodata;
+using Geodata.Application.Geodata.Queries.GetGeodataList;
 using Geodata.Persistence.IdentityEF;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,9 +38,11 @@ public class GeodataController : BaseController
 
     [HttpGet]
     [Route("DetailsGeodata")]
-    public async Task<ActionResult> Get([FromQuery] GetGeodataDto dto)
+    public async Task<ActionResult> Get([FromBody] GetGeodataDto dto)
     {
         _logger.LogInformation("Get Geodata. Input model: " + dto);
+
+        var query = _mapper.Map<GeodataDetailsQuery>(dto);
 
         var vm = await Mediator.Send(dto);
 
@@ -47,11 +52,12 @@ public class GeodataController : BaseController
     [HttpGet]
     [Route("GetGeodataList")]
     public async Task<ActionResult> GetGeodataList(
-         [FromQuery] GetGeodataList dto)
+         [FromBody] GetGeodataList dto)
     {
         _logger.LogInformation("Get list Geodata. Input model: " + dto);
 
-        var vm = await Mediator.Send(dto);
+        var queryList = _mapper.Map<GeodataListQuery>(dto);
+        var vm = await Mediator.Send(queryList);
 
         return Ok(vm);
     }
@@ -62,6 +68,7 @@ public class GeodataController : BaseController
         _logger.LogInformation("Update Geodata. Input model: " + dto);
 
         var command = _mapper.Map<UpdateGeodataCommand>(dto);
+
         await Mediator.Send(command);
 
         return Ok();
@@ -72,12 +79,9 @@ public class GeodataController : BaseController
     {
         _logger.LogInformation("Delete Geodata. Input model: " + dto);
 
-        //to do check
-        //var command = new DeleteGeodataCommand
-        //{
-        //    Id = dto.Id
-        //};
-        await Mediator.Send(dto);
+
+        var command = _mapper.Map<DeleteGeodataCommand>(dto);
+        await Mediator.Send(command);
 
         return Ok();
     }
@@ -85,6 +89,6 @@ public class GeodataController : BaseController
     [HttpGet("Test")]
     public string GetTest()
     {
-        return "Service running";
+        return "Service geodata is running";
     }
 }
