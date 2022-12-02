@@ -5,9 +5,10 @@ using Geodata.Persistence;
 using Geodata.Application;
 using Geodata.Persistence.IdentityEF;
 using Microsoft.AspNetCore.Identity;
+using Geodata.Api;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseKestrel();
+//builder.WebHost.UseKestrel();
 
 //Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -53,8 +54,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+
 app.UseStaticFiles();
 app.UseEndpoints(endpoints =>
 {

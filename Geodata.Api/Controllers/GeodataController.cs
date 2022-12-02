@@ -86,7 +86,8 @@ public class GeodataController : BaseController
         return Ok();
     }
 
-    [HttpGet("Test")]
+    [HttpGet]
+    [Route("Test")]
     public string GetTest()
     {
         return "Service geodata is running";
