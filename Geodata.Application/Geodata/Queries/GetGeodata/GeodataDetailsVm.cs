@@ -4,7 +4,7 @@ using Geodata.Domain;
 
 namespace Geodata.Application.Geodata.Queries.GetGeodata;
 
-internal class GeodataDetailsVm : IMapWith<GeodataDomain>
+public class GeodataDetailsVm : IMapWith<GeodataDomain>
 {
     public Guid Id { get; set; }
     public string Title { get; set; }

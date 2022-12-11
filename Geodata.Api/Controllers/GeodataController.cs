@@ -39,22 +39,23 @@ public class GeodataController : BaseController
 
     [HttpGet]
     [Route("DetailsGeodata")]
-    public async Task<ActionResult> Get([FromBody] GetGeodataDto dto)
+    public async Task<ActionResult> Get(Guid id)
     {
+        GetGeodataDto dto = new() { Id = id };
         _logger.LogInformation("Get Geodata. Input model: " + dto);
 
         var query = _mapper.Map<GeodataDetailsQuery>(dto);
 
-        var vm = await Mediator.Send(dto);
+        var vm = await Mediator.Send(query);
 
         return Ok(vm);
     }
 
     [HttpGet]
     [Route("GetGeodataList")]
-    public async Task<ActionResult> GetGeodataList(
-         [FromBody] GetGeodataList dto)
+    public async Task<ActionResult> GetGeodataList()
     {
+        GetGeodataList dto = new();
         _logger.LogInformation("Get list Geodata. Input model: " + dto);
 
         var queryList = _mapper.Map<GeodataListQuery>(dto);
@@ -64,6 +65,7 @@ public class GeodataController : BaseController
     }
 
     [HttpPost]
+    [Route("UpdateGeodata")]
     public async Task<ActionResult> Update([FromBody] UpdateGeodataDto dto)
     {
         _logger.LogInformation("Update Geodata. Input model: " + dto);
@@ -76,10 +78,23 @@ public class GeodataController : BaseController
     }
 
     [HttpDelete]
-    public async Task<ActionResult> Delete([FromBody] DeleteGeodataDto dto)
+    public async Task<ActionResult> Delete(Guid id)
     {
+        DeleteGeodataDto dto = new() { Id = id };
         _logger.LogInformation("Delete Geodata. Input model: " + dto);
+        
+        var command = _mapper.Map<DeleteGeodataCommand>(dto);
+        await Mediator.Send(command);
 
+        return Ok();
+    }
+
+    [HttpDelete]
+    [Route("DeleteAll")]
+    public async Task<ActionResult> Delete()
+    {
+        DeleteGeodataDto dto = new() { Id = id };
+        _logger.LogInformation("Delete Geodata. Input model: " + dto);
 
         var command = _mapper.Map<DeleteGeodataCommand>(dto);
         await Mediator.Send(command);
