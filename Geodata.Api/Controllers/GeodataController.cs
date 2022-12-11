@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Geodata.Api.Models;
 using Geodata.Application.Geodata.Commands.CreateGeodata;
+using Geodata.Application.Geodata.Commands.DeleteAllGeodata;
 using Geodata.Application.Geodata.Commands.DeleteGeodata;
 using Geodata.Application.Geodata.Commands.UpdateGeodata;
 using Geodata.Application.Geodata.Queries.GetGeodata;
@@ -91,12 +92,12 @@ public class GeodataController : BaseController
 
     [HttpDelete]
     [Route("DeleteAll")]
-    public async Task<ActionResult> Delete()
+    public async Task<ActionResult> DeleteAll()
     {
-        DeleteGeodataDto dto = new() { Id = id };
+        DeleteGeodataDto dto = new();
         _logger.LogInformation("Delete Geodata. Input model: " + dto);
 
-        var command = _mapper.Map<DeleteGeodataCommand>(dto);
+        var command = _mapper.Map<DeleteAllGeodataCommand>(dto);
         await Mediator.Send(command);
 
         return Ok();
