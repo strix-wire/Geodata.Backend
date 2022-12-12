@@ -94,7 +94,7 @@ public class GeodataController : BaseController
     [Route("DeleteAll")]
     public async Task<ActionResult> DeleteAll()
     {
-        DeleteGeodataDto dto = new();
+        DeleteAllGeodataDto dto = new();
         _logger.LogInformation("Delete Geodata. Input model: " + dto);
 
         var command = _mapper.Map<DeleteAllGeodataCommand>(dto);
