@@ -3,7 +3,7 @@ using Geodata.Application.Common.Mappings;
 using Geodata.Application.Geodata.Commands.CreateGeodata;
 using Geodata.Application.Geodata.Queries.GetGeodata;
 
-namespace Geodata.Api.Models;
+namespace Geodata.Api.Models.Geodata;
 
 public class GetGeodataDto : IMapWith<GeodataDetailsQuery>
 {

@@ -10,5 +10,7 @@ public class MyIdentityUser : IdentityUser
     public string? DateOfBirth { get; set; }
     public string? City { get; set; }
     public string? Sex { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
 }
 

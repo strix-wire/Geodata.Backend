@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Geodata.Api.Models;
+using Geodata.Api.Models.Geodata;
 using Geodata.Application.Geodata.Commands.CreateGeodata;
 using Geodata.Application.Geodata.Commands.DeleteAllGeodata;
 using Geodata.Application.Geodata.Commands.DeleteGeodata;

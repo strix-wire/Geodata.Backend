@@ -2,7 +2,7 @@
 using Geodata.Application.Common.Mappings;
 using Geodata.Application.Geodata.Commands.UpdateGeodata;
 
-namespace Geodata.Api.Models;
+namespace Geodata.Api.Models.Geodata;
 
 public class UpdateGeodataDto : IMapWith<UpdateGeodataCommand>
 {
