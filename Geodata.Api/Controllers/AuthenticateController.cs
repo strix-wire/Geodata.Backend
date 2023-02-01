@@ -32,7 +32,7 @@ namespace Geodata.Api.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Name);
+            var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -70,20 +70,15 @@ namespace Geodata.Api.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.UserName);
+            var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return BadRequest("User already exists!");
 
             MyIdentityUser user = new()
             {
-                Surname = model.Surname,
-                MiddleName = model.MiddleName,
-                DateOfBirth = model.DateOfBirth,
-                City = model.City,
-                Sex = model.Sex,
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.UserName
+                UserName = model.Username
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -96,7 +91,7 @@ namespace Geodata.Api.Controllers
         [Route("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.UserName);
+            var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return BadRequest("User already exists!");
 
@@ -104,7 +99,7 @@ namespace Geodata.Api.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.UserName
+                UserName = model.Username
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
