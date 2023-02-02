@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geodata.Persistence.Migrations
 {
     [DbContext(typeof(GeodataDbContext))]
-    [Migration("20221120120407_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230202092627_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
 
             modelBuilder.Entity("Geodata.Domain.GeodataDomain", b =>
                 {
@@ -69,14 +69,8 @@ namespace Geodata.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("City")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DateOfBirth")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -90,9 +84,6 @@ namespace Geodata.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MiddleName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -116,14 +107,13 @@ namespace Geodata.Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Sex")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -143,6 +133,26 @@ namespace Geodata.Persistence.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "f10ec17a-8c8a-44c3-85f4-639ab898d0fb",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "6d03427a-efbd-45c3-b610-9564dcc66c82",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            Name = "Admin",
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMIN@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFMYSPS9NRq0upUWjXIYJHnOLGPvHrxzMlEh9jntNl1PeUce3M3IO4r50NCZd2WL0Q==",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "67a7b03b-fa86-4b6b-a332-174d277b0fb5",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -169,6 +179,29 @@ namespace Geodata.Persistence.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "5efaada7-1916-4833-a239-4835cef570ee",
+                            ConcurrencyStamp = "394097b1-8c55-43b5-8a79-39280c66253e",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "5e195428-b874-465e-a6a3-4f89eca0dfb0",
+                            ConcurrencyStamp = "c2531dfd-43f9-479b-9315-0908bc319652",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "9df22342-667d-47ea-9df3-968dc9067b46",
+                            ConcurrencyStamp = "ee9ff487-caeb-4f01-9557-90eccda4b5d6",
+                            Name = "Moderator",
+                            NormalizedName = "MODERATOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -252,6 +285,18 @@ namespace Geodata.Persistence.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "f10ec17a-8c8a-44c3-85f4-639ab898d0fb",
+                            RoleId = "5efaada7-1916-4833-a239-4835cef570ee"
+                        },
+                        new
+                        {
+                            UserId = "f10ec17a-8c8a-44c3-85f4-639ab898d0fb",
+                            RoleId = "5e195428-b874-465e-a6a3-4f89eca0dfb0"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

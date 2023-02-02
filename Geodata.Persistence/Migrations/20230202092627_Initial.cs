@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Geodata.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,11 +33,8 @@ namespace Geodata.Persistence.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Surname = table.Column<string>(type: "TEXT", nullable: false),
-                    MiddleName = table.Column<string>(type: "TEXT", nullable: true),
-                    DateOfBirth = table.Column<string>(type: "TEXT", nullable: true),
-                    City = table.Column<string>(type: "TEXT", nullable: true),
-                    Sex = table.Column<string>(type: "TEXT", nullable: true),
+                    RefreshToken = table.Column<string>(type: "TEXT", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -179,6 +178,30 @@ namespace Geodata.Persistence.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "5e195428-b874-465e-a6a3-4f89eca0dfb0", "c2531dfd-43f9-479b-9315-0908bc319652", "User", "USER" },
+                    { "5efaada7-1916-4833-a239-4835cef570ee", "394097b1-8c55-43b5-8a79-39280c66253e", "Admin", "ADMIN" },
+                    { "9df22342-667d-47ea-9df3-968dc9067b46", "ee9ff487-caeb-4f01-9557-90eccda4b5d6", "Moderator", "MODERATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "f10ec17a-8c8a-44c3-85f4-639ab898d0fb", 0, "6d03427a-efbd-45c3-b610-9564dcc66c82", "admin@gmail.com", false, false, null, "Admin", "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAEAACcQAAAAEFMYSPS9NRq0upUWjXIYJHnOLGPvHrxzMlEh9jntNl1PeUce3M3IO4r50NCZd2WL0Q==", null, false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "67a7b03b-fa86-4b6b-a332-174d277b0fb5", false, "admin@gmail.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "5e195428-b874-465e-a6a3-4f89eca0dfb0", "f10ec17a-8c8a-44c3-85f4-639ab898d0fb" },
+                    { "5efaada7-1916-4833-a239-4835cef570ee", "f10ec17a-8c8a-44c3-85f4-639ab898d0fb" }
                 });
 
             migrationBuilder.CreateIndex(

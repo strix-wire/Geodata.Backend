@@ -59,10 +59,6 @@ public class GeodataDbContext : IdentityDbContext<MyIdentityUser>, IGeodataDbCon
             NormalizedEmail = "ADMIN@GMAIL.COM",
             Name = "Admin",
             Email = "admin@gmail.com",
-            Surname = "AdminSurname",
-            MiddleName = "AdminMiddleName",
-            //DateOfBirth = model.DateOfBirth,
-            City = "Tomsk",
             PasswordHash = hasher.HashPassword(null, "5tgmL1.2Ls"),
             //Sex = model.Sex
         });

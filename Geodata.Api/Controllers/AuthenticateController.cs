@@ -17,15 +17,17 @@ namespace Geodata.Api.Controllers
     {
         private readonly UserManager<MyIdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<MyIdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
 
         public AuthenticateController(
             UserManager<MyIdentityUser> userManager, RoleManager<IdentityRole> roleManager, 
-            IConfiguration configuration)
+            IConfiguration configuration, SignInManager<MyIdentityUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _signInManager = signInManager;
         }
 
         [HttpPost]
@@ -58,7 +60,7 @@ namespace Geodata.Api.Controllers
 
                 return Ok(new
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     RefreshToken = refreshToken,
                     Expiration = token.ValidTo
                 });
@@ -76,12 +78,14 @@ namespace Geodata.Api.Controllers
 
             MyIdentityUser user = new()
             {
+                Name = model.Username,
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username
             };
             var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
+            var isAddToRoleUser = await _userManager.AddToRoleAsync(user, UserRoles.User);
+            if (!result.Succeeded && !isAddToRoleUser.Succeeded)
                 return BadRequest("User creation failed! Please check user details and try again.");
 
             return Ok();
@@ -108,14 +112,16 @@ namespace Geodata.Api.Controllers
             //to do endure
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+
             if (!await _roleManager.RoleExistsAsync(UserRoles.User))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Moderator))
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Moderator));
+
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+            await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
 
             return Ok();
         }
@@ -149,20 +155,17 @@ namespace Geodata.Api.Controllers
 
             return new ObjectResult(new
             {
-                accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
-                refreshToken = newRefreshToken
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+                RefreshToken = newRefreshToken
             });
         }
 
         [Authorize]
         [HttpPost]
-        [Route("revoke/{username}")]
-        public async Task<IActionResult> Revoke(string username)
+        [Route("logout")]
+        public async Task<IActionResult> Logout()
         {
-            var user = await _userManager.FindByNameAsync(username);
-            if (user == null) return BadRequest("Invalid user name");
-
-            user.RefreshToken = null;
+                .RefreshToken = null;
             await _userManager.UpdateAsync(user);
 
             return NoContent();
@@ -170,8 +173,21 @@ namespace Geodata.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("revokeAll")]
-        public async Task<IActionResult> RevokeAll()
+        [Route("deleteuser")]
+        public async Task<IActionResult> DeleteUser(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return BadRequest("Invalid user name");
+
+            await _userManager.DeleteAsync(user);
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("deletealluser")]
+        public async Task<IActionResult> DeleteAllUsers()
         {
             var users = _userManager.Users.ToList();
             foreach (var user in users)
