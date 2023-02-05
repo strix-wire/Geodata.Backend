@@ -109,4 +109,15 @@ public class GeodataController : BaseController
     {
         return "Service geodata is running";
     }
+
+    /// <summary>
+    /// Принятие заявки расмотренной
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost]
+    [Route("Accept")]
+    public string Accept()
+    {
+
+    }
 }
