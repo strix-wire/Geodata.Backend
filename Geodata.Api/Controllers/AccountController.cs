@@ -13,14 +13,14 @@ namespace Geodata.Api.Controllers
 {
     [ApiController]
     [Route("api/v1/[Controller]")]
-    public class AuthenticateController : BaseController
+    public class AccountController : BaseController
     {
         private readonly UserManager<MyIdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<MyIdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticateController(
+        public AccountController(
             UserManager<MyIdentityUser> userManager, RoleManager<IdentityRole> roleManager, 
             IConfiguration configuration, SignInManager<MyIdentityUser> signInManager)
         {
@@ -91,6 +91,7 @@ namespace Geodata.Api.Controllers
             return Ok();
         }
 
+        //пока не исп.
         [HttpPost]
         [Route("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -128,7 +129,7 @@ namespace Geodata.Api.Controllers
 
         [HttpPost]
         [Route("refreshToken")]
-        public async Task<IActionResult> RefreshToken(TokenModel tokenModel)
+        public async Task<IActionResult> RefreshToken([FromBody] TokenModel tokenModel)
         {
             if (tokenModel is null)
                 return BadRequest("Invalid client request");
@@ -160,21 +161,28 @@ namespace Geodata.Api.Controllers
             });
         }
 
-        [Authorize]
-        [HttpPost]
-        [Route("logout")]
-        public async Task<IActionResult> Logout()
-        {
-                .RefreshToken = null;
-            await _userManager.UpdateAsync(user);
+        //[Authorize]
+        //[HttpGet("{username}")]
+        //public async Task<ActionResult<User>> GetUser(string username)
+        //{
+        //    IdentityUser user = await _userManager.FindByNameAsync(username);
 
-            return NoContent();
-        }
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-        [Authorize]
+        //    return new User
+        //    {
+        //        UserName = user.UserName,
+        //        Email = user.Email
+        //    };
+        //}
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
         [Route("deleteuser")]
-        public async Task<IActionResult> DeleteUser(string username)
+        public async Task<IActionResult> DeleteUser([FromBody] string username)
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null) return BadRequest("Invalid user name");
