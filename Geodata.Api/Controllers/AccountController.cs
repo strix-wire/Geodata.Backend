@@ -136,16 +136,6 @@ namespace Geodata.Api.Controllers
             if (!result.Succeeded)
                 return BadRequest("User creation failed! Please check user details and try again.");
 
-            //to do endure
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Moderator))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Moderator));
-
             await _userManager.AddToRoleAsync(user, UserRoles.Admin);
             await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
             await _userManager.AddToRoleAsync(user, UserRoles.User);

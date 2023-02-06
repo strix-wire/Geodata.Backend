@@ -25,54 +25,27 @@ public class GeodataDbContext : IdentityDbContext<MyIdentityUser>, IGeodataDbCon
         string idRoleAdmin = Guid.NewGuid().ToString();
         string idRoleUser = Guid.NewGuid().ToString();
         string idRoleModerator = Guid.NewGuid().ToString();
-        string idAccoundAdmin = Guid.NewGuid().ToString();
-
+        
         //Create roles
         builder.Entity<IdentityRole>().HasData(new IdentityRole
         {
             Id = idRoleAdmin,
             NormalizedName = "ADMIN",
-            Name = "Admin",
+            Name = IdentityEF.UserRoles.Admin,
         });
 
         builder.Entity<IdentityRole>().HasData(new IdentityRole
         {
             Id = idRoleUser,
             NormalizedName = "USER",
-            Name = "User",
+            Name = IdentityEF.UserRoles.User,
         });
 
         builder.Entity<IdentityRole>().HasData(new IdentityRole
         {
             Id = idRoleModerator,
             NormalizedName = "MODERATOR",
-            Name = "Moderator",
-        });
-
-        //Create admin
-        var hasher = new PasswordHasher<MyIdentityUser>();
-        builder.Entity<MyIdentityUser>().HasData(new MyIdentityUser
-        {
-            Id = idAccoundAdmin,
-            UserName = "admin@gmail.com",
-            NormalizedUserName = "ADMIN@GMAIL.COM",
-            NormalizedEmail = "ADMIN@GMAIL.COM",
-            Name = "Admin",
-            Email = "admin@gmail.com",
-            PasswordHash = hasher.HashPassword(null, "5tgmL1.2Ls"),
-            //Sex = model.Sex
-        });
-
-        builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
-        {
-            RoleId = idRoleAdmin,
-            UserId = idAccoundAdmin
-        });
-
-        builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
-        {
-            RoleId = idRoleUser,
-            UserId = idAccoundAdmin
+            Name = IdentityEF.UserRoles.Moderator,
         });
     }
 }
