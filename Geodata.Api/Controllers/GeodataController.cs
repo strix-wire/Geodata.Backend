@@ -7,7 +7,6 @@ using Geodata.Application.Geodata.Commands.UpdateGeodata;
 using Geodata.Application.Geodata.Queries.GetGeodata;
 using Geodata.Application.Geodata.Queries.GetGeodataList;
 using Geodata.Persistence.IdentityEF;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -108,16 +107,5 @@ public class GeodataController : BaseController
     public string GetTest()
     {
         return "Service geodata is running";
-    }
-
-    /// <summary>
-    /// Принятие заявки расмотренной
-    /// </summary>
-    /// <returns></returns>
-    [HttpPost]
-    [Route("Accept")]
-    public string Accept()
-    {
-
     }
 }

@@ -91,7 +91,33 @@ namespace Geodata.Api.Controllers
             return Ok();
         }
 
-        //пока не исп.
+        /// <summary>
+        /// Делает модером юзера
+        /// </summary>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [HttpPost]
+        [Route("makemoderator")]
+        public async Task<IActionResult> MakeModerator([FromBody] string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                return BadRequest("User is not exists!");
+
+            //ПРОВЕРИТЬ!!!!!!!!!!!!!
+            if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value == "Admin")
+                return BadRequest("user is already a admin!");
+
+            if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value == "Moderator")
+                return BadRequest("user is already a moderator!");
+
+            await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
+            
+            return Ok();
+        }
+
+
+
+
         [HttpPost]
         [Route("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
