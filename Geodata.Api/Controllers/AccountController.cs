@@ -3,6 +3,7 @@ using Geodata.Persistence.IdentityEF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -91,6 +92,32 @@ namespace Geodata.Api.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("registerAdmin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        {
+            var userExists = await _userManager.FindByNameAsync(model.Username);
+            if (userExists != null)
+                return BadRequest("User already exists!");
+
+            MyIdentityUser user = new()
+            {
+                Name = model.Username,
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Username
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+                return BadRequest("User creation failed! Please check user details and try again.");
+
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+            await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
+
+            return Ok();
+        }
+
         /// <summary>
         /// Делает модером юзера
         /// </summary>
@@ -112,34 +139,6 @@ namespace Geodata.Api.Controllers
 
             await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
             
-            return Ok();
-        }
-
-
-
-
-        [HttpPost]
-        [Route("registerAdmin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
-        {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
-            if (userExists != null)
-                return BadRequest("User already exists!");
-
-            MyIdentityUser user = new()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
-            };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return BadRequest("User creation failed! Please check user details and try again.");
-
-            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-            await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
-            await _userManager.AddToRoleAsync(user, UserRoles.User);
-
             return Ok();
         }
 
@@ -237,6 +236,58 @@ namespace Geodata.Api.Controllers
                 );
 
             return token;
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("GenerateAccessToken")]
+        public async Task<IActionResult> GenerateAccessToken(MyIdentityUser user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email)
+                
+            };
+
+            var token = CreateToken(claims);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            user.AccessToken = tokenString;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(tokenString);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetUser")]
+        public async Task<IActionResult> GetUser(string accessToken)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(accessToken);
+
+            // получаем настройки из токена
+            var name = token.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+            var email = token.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
+
+            // получаем пользователя из базы данных по токену доступа
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.AccessToken == accessToken);
+
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+
+        [Authorize(Roles = "Admin, Moderator")]
+        [HttpGet]
+        [Route("GetListUsers")]
+        public async Task<IActionResult> GetListUsers()
+        {
+            var listUsers = await _userManager.Users.ToListAsync();
+            
+            return Ok(listUsers);
         }
 
         private static string GenerateRefreshToken()
