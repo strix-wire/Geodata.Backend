@@ -22,7 +22,7 @@ public class CreateGeodataCommandHandler : IRequestHandler<CreateGeodataCommand,
             Details = request.Details,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            IsChecked = false,
+            IsChecked = request.IsChecked,
             CreationDate = DateTime.Now,
             EditDate = null
         };

@@ -94,7 +94,7 @@ namespace Geodata.Api.Controllers
         /// <summary>
         /// Делает модером юзера
         /// </summary>
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = UserRoles.Admin)]
         [HttpPost]
         [Route("makemoderator")]
         public async Task<IActionResult> MakeModerator([FromBody] string username)
@@ -115,9 +115,6 @@ namespace Geodata.Api.Controllers
             return Ok();
         }
 
-
-
-
         [HttpPost]
         [Route("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -128,6 +125,7 @@ namespace Geodata.Api.Controllers
 
             MyIdentityUser user = new()
             {
+                Name = model.Username,
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username
@@ -135,16 +133,6 @@ namespace Geodata.Api.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return BadRequest("User creation failed! Please check user details and try again.");
-
-            //to do endure
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Moderator))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Moderator));
 
             await _userManager.AddToRoleAsync(user, UserRoles.Admin);
             await _userManager.AddToRoleAsync(user, UserRoles.Moderator);
@@ -187,33 +175,58 @@ namespace Geodata.Api.Controllers
             });
         }
 
-        //[Authorize]
-        //[HttpGet("{username}")]
-        //public async Task<ActionResult<User>> GetUser(string username)
-        //{
-        //    IdentityUser user = await _userManager.FindByNameAsync(username);
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet("GetUser/{username}")]
+        public async Task<ActionResult<User>> GetUser(string username)
+        {
+            if (User.Identity.Name != username && !User.IsInRole(UserRoles.Admin))
+                return Forbid();
 
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+            IdentityUser user = await _userManager.FindByNameAsync(username);
 
-        //    return new User
-        //    {
-        //        UserName = user.UserName,
-        //        Email = user.Email
-        //    };
-        //}
+            if (user == null)
+                return NotFound();
+
+            return new User
+            {
+                UserName = user.UserName,
+                Email = user.Email
+            };
+        }
+
+        [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
+        [HttpGet("GetUsers")]
+        public async Task<ActionResult<List<User>>> GetUsers()
+        {
+            var users = _userManager.Users.ToList();
+            var userList = new List<User>();
+
+            foreach (IdentityUser user in users)
+            {
+                userList.Add(new User
+                {
+                    UserName = user.UserName,
+                    Email = user.Email
+                });
+            }
+
+            return userList;
+        }
+
+
 
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
         [Route("deleteuser")]
-        public async Task<IActionResult> DeleteUser([FromBody] string username)
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequest request)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByNameAsync(request.Username);
             if (user == null) return BadRequest("Invalid user name");
 
-            await _userManager.DeleteAsync(user);
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to delete user");
 
             return NoContent();
         }

@@ -10,7 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.WebHost.UseKestrel();
 
 //Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -18,10 +17,12 @@ builder.Services.AddIdentity<MyIdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<GeodataDbContext>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
+    options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredUniqueChars = 0;
+    options.Password.RequiredLength = 1;
 });
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplication();

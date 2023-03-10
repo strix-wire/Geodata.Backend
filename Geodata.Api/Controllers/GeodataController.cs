@@ -7,6 +7,7 @@ using Geodata.Application.Geodata.Commands.UpdateGeodata;
 using Geodata.Application.Geodata.Queries.GetGeodata;
 using Geodata.Application.Geodata.Queries.GetGeodataList;
 using Geodata.Persistence.IdentityEF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ public class GeodataController : BaseController
         RoleManager<IdentityRole> roleManager, UserManager<MyIdentityUser> userManager)
         => (_logger, _mapper, _userManager, _roleManager) = (logger, mapper, userManager, roleManager);
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost]
     [Route("Create")]
     public async Task<ActionResult> Create([FromBody] CreateGeodataDto dto)
@@ -64,6 +66,7 @@ public class GeodataController : BaseController
         return Ok(vm);
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost]
     [Route("UpdateGeodata")]
     public async Task<ActionResult> Update([FromBody] UpdateGeodataDto dto)
@@ -77,6 +80,7 @@ public class GeodataController : BaseController
         return Ok();
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpDelete]
     public async Task<ActionResult> Delete(Guid id)
     {

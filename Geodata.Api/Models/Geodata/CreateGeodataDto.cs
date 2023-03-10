@@ -11,7 +11,7 @@ public class CreateGeodataDto : IMapWith<CreateGeodataCommand>
     public string? Details { get; set; }
     public string Latitude { get; set; }
     public string Longitude { get; set; }
-
+    public bool IsChecked { get; set; }
     public void Mapping(Profile profile)
     {
         profile.CreateMap<CreateGeodataDto, CreateGeodataCommand>()
@@ -24,6 +24,8 @@ public class CreateGeodataDto : IMapWith<CreateGeodataCommand>
             .ForMember(geoDataDto => geoDataDto.Longitude,
                 opt => opt.MapFrom(geoData => geoData.Longitude))
             .ForMember(geoDataDto => geoDataDto.UserId,
-                opt => opt.MapFrom(geoData => geoData.UserId));
+                opt => opt.MapFrom(geoData => geoData.UserId))
+            .ForMember(geoDataDto => geoDataDto.IsChecked,
+                opt => opt.MapFrom(geoData => geoData.IsChecked));
     }
 }

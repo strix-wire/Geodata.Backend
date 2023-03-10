@@ -32,21 +32,21 @@ public class GeodataDbContext : IdentityDbContext<MyIdentityUser>, IGeodataDbCon
         {
             Id = idRoleAdmin,
             NormalizedName = "ADMIN",
-            Name = "Admin",
+            Name = IdentityEF.UserRoles.Admin,
         });
 
         builder.Entity<IdentityRole>().HasData(new IdentityRole
         {
             Id = idRoleUser,
             NormalizedName = "USER",
-            Name = "User",
+            Name = IdentityEF.UserRoles.User,
         });
 
         builder.Entity<IdentityRole>().HasData(new IdentityRole
         {
             Id = idRoleModerator,
             NormalizedName = "MODERATOR",
-            Name = "Moderator",
+            Name = IdentityEF.UserRoles.Moderator,
         });
 
         //Create admin
