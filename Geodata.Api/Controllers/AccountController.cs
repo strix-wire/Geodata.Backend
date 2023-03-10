@@ -118,6 +118,7 @@ namespace Geodata.Api.Controllers
             return Ok();
         }
 
+        [Obsolete("Пока еще не используется!")]
         /// <summary>
         /// Делает модером юзера
         /// </summary>
@@ -195,11 +196,11 @@ namespace Geodata.Api.Controllers
             };
         }
 
-        [Authorize(Roles = "Admin", AuthenticationSchemes = "Bearer")]
+        [Authorize(Roles = "Admin, Moderator", AuthenticationSchemes = "Bearer")]
         [HttpGet("GetUsers")]
         public async Task<ActionResult<List<User>>> GetUsers()
         {
-            var users = _userManager.Users.ToList();
+            var users = await _userManager.Users.ToListAsync();
             var userList = new List<User>();
 
             foreach (IdentityUser user in users)
@@ -213,8 +214,6 @@ namespace Geodata.Api.Controllers
 
             return userList;
         }
-
-
 
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
@@ -261,37 +260,6 @@ namespace Geodata.Api.Controllers
                 );
 
             return token;
-        }
-
-        [Authorize]
-        [HttpPost]
-        [Route("GenerateAccessToken")]
-        public async Task<IActionResult> GenerateAccessToken(MyIdentityUser user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
-                
-            };
-
-            var token = CreateToken(claims);
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-            user.AccessToken = tokenString;
-            await _userManager.UpdateAsync(user);
-
-            return Ok(tokenString);
-        }
-
-        [Authorize(Roles = "Admin, Moderator")]
-        [HttpGet]
-        [Route("GetListUsers")]
-        public async Task<IActionResult> GetListUsers()
-        {
-            var listUsers = await _userManager.Users.ToListAsync();
-            
-            return Ok(listUsers);
         }
 
         private static string GenerateRefreshToken()
