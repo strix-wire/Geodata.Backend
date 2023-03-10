@@ -284,27 +284,6 @@ namespace Geodata.Api.Controllers
             return Ok(tokenString);
         }
 
-        [Authorize]
-        [HttpGet]
-        [Route("GetUser")]
-        public async Task<IActionResult> GetUser(string accessToken)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(accessToken);
-
-            // получаем настройки из токена
-            var name = token.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
-            var email = token.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
-
-            // получаем пользователя из базы данных по токену доступа
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.AccessToken == accessToken);
-
-            if (user == null)
-                return NotFound();
-
-            return Ok(user);
-        }
-
         [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
         [Route("GetListUsers")]
