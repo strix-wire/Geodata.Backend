@@ -1,5 +1,4 @@
 ﻿using Geodata.Application.Interfaces;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,14 +11,11 @@ public static class DependencyInjection
     public static IServiceCollection AddPersistence(this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = Path.GetDirectoryName
-            (Directory.GetCurrentDirectory()) + "\\Db" + "\\GeoEventSqlite.db" };
-        var connectionString = connectionStringBuilder.ToString();
-        var connection = new SqliteConnection(connectionString);
+        var connection = configuration.GetConnectionString("geoevent_db");
 
         services.AddDbContext<GeodataDbContext>(options =>
         {
-            options.UseSqlite(connection);
+            options.UseNpgsql(connection);
         });
         services.AddScoped<IGeodataDbContext>(provider => provider.GetService<GeodataDbContext>());
         return services;

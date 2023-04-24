@@ -19,11 +19,6 @@ internal class GeodataListQueryHandler
         CancellationToken cancellationToken)
     {
         var GeoEventsQuery = await _dbContext.GeodataEntities
-            //to do role = moderator or admin - see all
-            //else only IsChecked == false
-
-            //Метод расширения из automapper, который проецирует коллекцию в соответствии с заданной
-            //конфигурацией
             .ProjectTo<GeodataLookupDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 

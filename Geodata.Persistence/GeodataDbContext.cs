@@ -21,6 +21,11 @@ public class GeodataDbContext : IdentityDbContext<MyIdentityUser>, IGeodataDbCon
         builder.ApplyConfiguration(new IdentityConfiguration());
         base.OnModelCreating(builder);
 
+        builder.Entity<GeodataDomain>().Property(x => x.CreationDate)
+.HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        builder.Entity<GeodataDomain>().Property(x => x.EditDate)
+    .HasConversion(v => v.Value.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
         //to do put in a separate class
         string idRoleAdmin = Guid.NewGuid().ToString();
         string idRoleUser = Guid.NewGuid().ToString();

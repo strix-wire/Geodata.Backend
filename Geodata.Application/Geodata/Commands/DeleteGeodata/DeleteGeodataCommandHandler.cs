@@ -1,10 +1,5 @@
 ﻿using Geodata.Application.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Geodata.Application.Geodata.Commands.DeleteGeodata;
 
@@ -22,8 +17,6 @@ public class DeleteGeodataCommandHandler : IRequestHandler<DeleteGeodataCommand>
             .FindAsync(new object[] { request.Id }, cancellationToken);
 
         if (entity == null)
-            //to (never) do create class exception
-            //throw new NotFoundException(nameof(GeoEventConsidered), request.Id);
             throw new ArgumentNullException();
 
         _dbContext.GeodataEntities.Remove(entity);
