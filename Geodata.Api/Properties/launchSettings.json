@@ -1,25 +1,10 @@
 ﻿{
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:58152",
-      "sslPort": 0
-    }
-  },
   "profiles": {
     "Geodata.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "http://localhost:5265",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
+      "externalUrlConfiguration": true,
+      "applicationUrl": "http://localhost:81",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
