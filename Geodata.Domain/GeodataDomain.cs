@@ -2,6 +2,7 @@
 
 public class GeodataDomain
 {
+    public int T { get; set; }
     public int Y { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
